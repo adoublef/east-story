@@ -1,1 +1,1 @@
-# east-story
+# East Story
