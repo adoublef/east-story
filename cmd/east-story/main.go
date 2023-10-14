@@ -29,5 +29,5 @@ func main() {
 
 func run(ctx context.Context) (err error) {
 	// TODO -- setup could be moved back here
-	return rootCmd.Execute()
+	return rootCmd.ExecuteContext(ctx)
 }
