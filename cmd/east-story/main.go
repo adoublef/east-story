@@ -3,39 +3,13 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
-
-	gap "github.com/muesli/go-app-paths"
-	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:  "east-story",
-	Args: cobra.NoArgs,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return cmd.Help()
-	},
-}
-
-var echoCmd = &cobra.Command{
-	Use:   "echo [string to echo]",
-	Short: "Echo anything to the screen",
-	Long: `echo is for echoing anything back.
-Echo works a lot like print, except it has a child command.`,
-	Args: cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Print: " + strings.Join(args, " "))
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(echoCmd)
-}
+const AppName = "east-story"
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -54,26 +28,6 @@ func main() {
 }
 
 func run(ctx context.Context) (err error) {
-	// use XDG to create necessary data dirs for the program
-	s := gap.NewScope(gap.User, "east-story")
-	dirs, err := s.DataDirs()
-	if err != nil {
-		return err
-	}
-	// create the app base dir, if it doesn't exist
-	var dir string
-	if len(dirs) > 0 {
-		dir = dirs[0]
-	} else {
-		dir, _ = os.UserHomeDir()
-	}
-	// create directory with 0o770 (504) permission
-	if _, err := os.Stat(dir); err != nil {
-		if os.IsNotExist(err) {
-			return os.Mkdir(dir, 0o770)
-		}
-		return err
-	}
-	// init cobra
+	// TODO -- setup could be moved back here
 	return rootCmd.Execute()
 }
