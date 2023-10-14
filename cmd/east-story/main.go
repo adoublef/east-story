@@ -1,12 +1,14 @@
+// ls ~/.local/share/east-story/
 package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	gap "github.com/muesli/go-app-paths"
 )
 
 func main() {
@@ -26,6 +28,25 @@ func main() {
 }
 
 func run(ctx context.Context) (err error) {
-	fmt.Fprintln(os.Stdout, "Hello, World")
+	// use XDG to create necessary data dirs for the program
+	s := gap.NewScope(gap.User, "east-story")
+	dirs, err := s.DataDirs()
+	if err != nil {
+		return err
+	}
+	// create the app base dir, if it doesn't exist
+	var dir string
+	if len(dirs) > 0 {
+		dir = dirs[0]
+	} else {
+		dir, _ = os.UserHomeDir()
+	}
+	// create directory with 0o770 (504) permission
+	if _, err := os.Stat(dir); err != nil {
+		if os.IsNotExist(err) {
+			return os.Mkdir(dir, 0o770)
+		}
+		return err
+	}
 	return
 }
