@@ -3,13 +3,39 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	gap "github.com/muesli/go-app-paths"
+	"github.com/spf13/cobra"
 )
+
+var rootCmd = &cobra.Command{
+	Use:  "east-story",
+	Args: cobra.NoArgs,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return cmd.Help()
+	},
+}
+
+var echoCmd = &cobra.Command{
+	Use:   "echo [string to echo]",
+	Short: "Echo anything to the screen",
+	Long: `echo is for echoing anything back.
+Echo works a lot like print, except it has a child command.`,
+	Args: cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Print: " + strings.Join(args, " "))
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(echoCmd)
+}
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -48,5 +74,6 @@ func run(ctx context.Context) (err error) {
 		}
 		return err
 	}
-	return
+	// init cobra
+	return rootCmd.Execute()
 }
