@@ -14,13 +14,12 @@ import (
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Login to authenticate",
-	Long:  `echo is for authenticating the user`,
+	Long:  `login is for authenticating the user`,
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		rp := oauth2.Config{
 			// NOTE -- will use infisical to access these
 			ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
-			ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
 			Endpoint:     github.Endpoint,
 		}
 
